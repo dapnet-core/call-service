@@ -17,7 +17,7 @@
 	<files>
 		<file>
 			<source>${project.build.directory}/${project.build.finalName}.${project.packaging}</source>
-			<outputDirectory>/</outputDirectory>
+			<outputDirectory></outputDirectory>
 			<destName>dapnet-call-service.jar</destName>
 		</file>
 	</files>
@@ -26,7 +26,7 @@
 			<directory>${project.basedir}</directory>
 			<outputDirectory></outputDirectory>
 			<includes>
-				<include>Licences.txt</include>
+				<include>License.txt</include>
 				<include>README.md</include>
 			</includes>
 		</fileSet>
@@ -35,6 +35,7 @@
 			<outputDirectory></outputDirectory>
 			<includes>
 				<include>LogSettings.xml</include>
+				<include>service.properties</include>
 			</includes>
 		</fileSet>
 	</fileSets>
