@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>de.rwth-aachen.afu.dapnet</groupId>
-	<artifactId>dapnet-call-service</artifactId>
+	<artifactId>call-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>DAPNET Call Service</name>
-	<url>https://www.afu.rwth-aachen.de/projekte/funkruf-pager-pocsag/funkrufmaster-2-0-dapnet</url>
+	<url>https://hampager.de/</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
