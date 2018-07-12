@@ -1,4 +1,4 @@
-package de.hampager.dapnet.call_service;
+package de.hampager.dapnet.service.calls;
 
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;

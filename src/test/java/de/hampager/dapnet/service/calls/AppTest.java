@@ -1,4 +1,4 @@
-package de.hampager.dapnet.call_service;
+package de.hampager.dapnet.service.calls;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
