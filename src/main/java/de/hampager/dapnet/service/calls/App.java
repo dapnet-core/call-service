@@ -24,7 +24,7 @@ public final class App {
 	private static final Logger LOGGER = LogManager.getLogger();
 	private static final String DEFAULT_CONFIG = "service.properties";
 	private static final String SERVICE_VERSION;
-	private static ImmutableConfiguration serviceConfig;
+	private static volatile ImmutableConfiguration serviceConfig;
 
 	static {
 		// Read service version from package
@@ -55,15 +55,6 @@ public final class App {
 	 */
 	public static String getVersion() {
 		return SERVICE_VERSION;
-	}
-
-	/**
-	 * Gets the loaded service configuration.
-	 * 
-	 * @return Configuration object
-	 */
-	public static ImmutableConfiguration getConfiguration() {
-		return serviceConfig;
 	}
 
 	private static void parseCommandLine(String[] args) throws ParseException, ConfigurationException {
