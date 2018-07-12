@@ -38,13 +38,13 @@ public final class App {
 	 * @param args Command line arguments
 	 */
 	public static void main(String[] args) {
-		LOGGER.info("Starting DAPNET call service version {}", SERVICE_VERSION);
+		LOGGER.info("Starting DAPNET call service {}", SERVICE_VERSION);
 
 		try {
 			registerShutdownHook();
 			parseCommandLine(args);
 		} catch (Exception ex) {
-			LOGGER.fatal("Call service startup failed!", ex);
+			LOGGER.fatal("Service startup failed!", ex);
 		}
 	}
 
@@ -76,7 +76,7 @@ public final class App {
 		CommandLine cli = parser.parse(opts, args);
 		if (cli.hasOption("help")) {
 			HelpFormatter formatter = new HelpFormatter();
-			formatter.printHelp("dapnet-call-service [options]", opts);
+			formatter.printHelp("call-service [options]", opts);
 			System.exit(1);
 		} else if (cli.hasOption("version")) {
 			System.out.println("DAPNET call service " + SERVICE_VERSION);
