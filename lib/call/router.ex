@@ -2,6 +2,7 @@ defmodule Call.Router do
   use Plug.Router
 
   plug DapnetService.Plug.Api
+  plug DapnetService.Plug.BasicAuth
   plug Plug.Parsers, parsers: [:json], json_decoder: Poison
 
   plug :match
@@ -10,6 +11,7 @@ defmodule Call.Router do
   post "/calls" do
     schema = Call.Schema.call_schema
     call = conn.body_params
+    user = conn.assigns[:login]["user"]["_id"]
 
     case ExJsonSchema.Validator.validate(schema, call) do
       :ok ->
@@ -17,7 +19,7 @@ defmodule Call.Router do
         |> Map.put("id", uuid())
         |> Map.put("origin", origin())
         |> Map.put("created_on", Timex.now())
-        |> Map.put("created_by", "todo_user")
+        |> Map.put("created_by", user)
 
         Call.Dispatch.dispatch call
         Call.Database.store call
@@ -33,6 +35,8 @@ defmodule Call.Router do
   end
 
   get "/calls" do
+    IO.inspect conn
+
     case Call.Database.list() do
       nil ->
         send_resp(conn, 404, '{"error": "Not found"}')
@@ -55,7 +59,7 @@ defmodule Call.Router do
   end
 
   defp uuid() do
-    UUID.uuid5(:dns, System.get_env("NODE_HOSTNAME"))
+    UUID.uuid1()
   end
 
   defp origin() do
