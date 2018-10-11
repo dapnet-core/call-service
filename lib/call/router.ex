@@ -21,7 +21,7 @@ defmodule Call.Router do
         |> Map.put("created_on", Timex.now())
         |> Map.put("created_by", user)
 
-        Call.Dispatch.dispatch call
+        Call.Dispatcher.dispatch call
         Call.Database.store call
 
         json_call = Poison.encode!(call)
@@ -35,8 +35,6 @@ defmodule Call.Router do
   end
 
   get "/calls" do
-    IO.inspect conn
-
     case Call.Database.list() do
       nil ->
         send_resp(conn, 404, '{"error": "Not found"}')

@@ -21,7 +21,7 @@ defmodule Call.RabbitMQ do
   end
 
   def init(_opts) do
-    connect
+    connect()
   end
 
   def handle_call({:publish_call, call}, _from, chan) do
@@ -52,8 +52,12 @@ defmodule Call.RabbitMQ do
   def handle_info({:basic_deliver, payload, %{delivery_tag: tag, routing_key: key}}, chan) do
     :ok = Basic.ack chan, tag
 
-    data = Poison.decode!(payload)
-
+    case Poison.decode(payload) do
+      {:ok, call} ->
+        Call.Dispatcher.dispatch(call)
+        Call.Database.store call
+      _ -> Logger.warn("Failed to decode remote call")
+    end
 
     {:noreply, chan}
   end
@@ -61,7 +65,7 @@ defmodule Call.RabbitMQ do
   # Automatic Reconnect
   def handle_info({:DOWN, _, :process, _pid, _reason}, _) do
     Logger.warn("RabbitMQ connection closed.")
-    {:ok, chan} = connect
+    {:ok, chan} = connect()
     {:noreply, chan}
   end
 
@@ -91,7 +95,7 @@ defmodule Call.RabbitMQ do
         Logger.error("RabbitMQ connection failed.")
         # Reconnection loop
         :timer.sleep(10000)
-        connect
+        connect()
     end
   end
 

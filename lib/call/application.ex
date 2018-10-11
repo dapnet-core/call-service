@@ -17,6 +17,7 @@ defmodule Call.Application do
       ),
       worker(Call.RabbitMQ, [], restart: :permanent),
       worker(Call.Database, [], restart: :permanent),
+      worker(Call.Dispatcher, [], restart: :permanent),
       worker(DapnetService.CouchDB, [], restart: :permanent),
     ]
 

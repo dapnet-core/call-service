@@ -1,5 +1,19 @@
-defmodule Call.Dispatch do
+defmodule Call.Dispatcher do
+  use GenServer
+
   def dispatch(call) do
+    GenServer.call(__MODULE__, {:dispatch, call})
+  end
+
+  def start_link do
+    GenServer.start_link(__MODULE__, {}, [name: __MODULE__])
+  end
+
+  def init(_opts) do
+    {:ok, nil}
+  end
+
+  def handle_call({:dispatch, call}, _from, state) do
     recipients = Map.get(call, "recipients", %{})
 
 #    subscribers = Map.get(recipients, "subscribers", [])
@@ -32,6 +46,8 @@ defmodule Call.Dispatch do
         end)
       end)
     end)
+
+    {:reply, :ok, state}
   end
 
   def send_call(call, transmitter, pager) do
