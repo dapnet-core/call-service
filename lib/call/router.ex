@@ -21,9 +21,6 @@ defmodule Call.Router do
         |> Map.put("created_on", Timex.now())
         |> Map.put("created_by", user)
 
-        Call.Dispatcher.dispatch call
-        Call.Database.store call
-
         json_call = Poison.encode!(call)
         Call.RabbitMQ.publish_call(json_call)
 

@@ -16,9 +16,11 @@ defmodule Call.Dispatcher do
   def handle_call({:dispatch, call}, _from, state) do
     recipients = Map.get(call, "recipients", %{})
 
-#    subscribers = Map.get(recipients, "subscribers", [])
-    #    |> Enum.into(MapSet.new)
-    subscribers = %{}
+    subscribers = Map.get(recipients, "subscribers", [])
+    |> Enum.map(fn subscriber -> get_subscriber(subscriber) end)
+    |> Enum.reject(&is_nil/1)
+    |> Enum.reduce(%{}, &Map.merge/2)
+    |> Enum.into(%{})
 
     subscribers = Map.get(recipients, "subscriber_groups", [])
     |> Enum.map(fn group -> group_subscribers(group) end)
@@ -27,9 +29,11 @@ defmodule Call.Dispatcher do
 
     distribution = Map.get(call, "distribution", %{})
 
-    #transmitters = Map.get(distribution, "transmitters", [])
-    #|> Enum.into(MapSet.new)
-    transmitters = %{}
+    transmitters = Map.get(distribution, "transmitters", [])
+    |> Enum.map(fn transmitter -> get_transmitter(transmitter) end)
+    |> Enum.reject(&is_nil/1)
+    |> Enum.reduce(%{}, &Map.merge/2)
+    |> Enum.into(%{})
 
     transmitters = Map.get(distribution, "transmitter_groups", [])
     |> Enum.map(fn group -> group_transmitters(group) end)
@@ -69,7 +73,27 @@ defmodule Call.Dispatcher do
     })
 
     Call.RabbitMQ.publish_call(transmitter_id, data)
-    IO.inspect [transmitter_id, data]
+  end
+  def get_subscriber(id) do
+    get_object("subscribers", id)
+  end
+
+  def get_transmitter(id) do
+    get_object("transmitters", id)
+  end
+
+  def get_object(database, id) do
+    result = DapnetService.CouchDB.db(database)
+    |> CouchDB.Database.get(id)
+
+    case result do
+      {:ok, response} ->
+        response
+        |> Poison.decode!
+        |> (&(%{id => &1})).()
+      _ ->
+        nil
+    end
   end
 
   def group_subscribers(group) do

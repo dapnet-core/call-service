@@ -13,25 +13,25 @@ defmodule Call.RabbitMQ do
   end
 
   def publish_call(call) do
-    GenServer.call(__MODULE__, {:publish_call, call})
+    GenServer.cast(__MODULE__, {:publish_call, call})
   end
 
   def publish_call(tx_id, call) do
-    GenServer.call(__MODULE__, {:publish_call, tx_id, call})
+    GenServer.cast(__MODULE__, {:publish_call, tx_id, call})
   end
 
   def init(_opts) do
     connect()
   end
 
-  def handle_call({:publish_call, call}, _from, chan) do
-    result = AMQP.Basic.publish(chan, @exchange, "", call)
-    {:reply, result, chan}
+  def handle_cast({:publish_call, call}, chan) do
+    _result = AMQP.Basic.publish(chan, @exchange, "", call)
+    {:noreply, chan}
   end
 
-  def handle_call({:publish_call, tx_id, call}, _from, chan) do
-    result = AMQP.Basic.publish(chan, @local_exchange, tx_id, call)
-    {:reply, result, chan}
+  def handle_cast({:publish_call, tx_id, call}, chan) do
+    _result = AMQP.Basic.publish(chan, @local_exchange, tx_id, call)
+    {:noreply, chan}
   end
 
   # Confirmation sent by the broker after registering this process as a consumer
