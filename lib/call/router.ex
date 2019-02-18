@@ -22,7 +22,12 @@ defmodule Call.Router do
         |> Map.put("created_by", user)
 
         json_call = Poison.encode!(call)
-        Call.RabbitMQ.publish_call(json_call)
+
+        if Map.get(call, "local", false) do
+          Call.Dispatcher.dispatch(call)
+        else
+          Call.RabbitMQ.publish_call(json_call)
+        end
 
         send_resp(conn, 200, json_call)
       {:error, errors} ->

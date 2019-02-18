@@ -41,6 +41,9 @@ defmodule Call.Dispatcher do
     |> Map.merge(transmitters)
 
     Enum.each(transmitters, fn {_, transmitter} ->
+      Enum.each(Map.get(recipients, "pocsag", []), fn pager ->
+        send_call(call, transmitter, pager)
+      end)
       Enum.each(subscribers, fn {_, subscriber} ->
         pagers = Map.get(subscriber, "pagers")
         Enum.each(pagers, fn pager ->

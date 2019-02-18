@@ -17,9 +17,24 @@ defmodule Call.Schema do
         },
         "expires_on" => %{"type" => "string"},
         "data" => %{"type" => "string"},
+        "local" => %{"type" => "boolean", "default" => "false"},
         "recipients" => %{
           "type" => "object",
           "properties" => %{
+            "pocsag" => %{
+              "type" => "array",
+              "items" => %{
+                "type" => "object",
+                "properties" => %{
+                  "ric" => %{"type" => "integer"},
+                  "function" => %{
+                    "type" => "integer",
+                    "minimum" => 0,
+                    "maximum" => 3
+                  }
+                }
+              }
+            },
             "subscribers" => %{
               "type" => "array",
               "items" => %{"type" => "string"}
